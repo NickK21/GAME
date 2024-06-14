@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <functional>
 
 class Menu
 {
@@ -93,7 +94,9 @@ public:
         else if (input == 3) 
         {
             return std::make_pair(Event::ChangeLocation, 3);
-        } else {
+        } 
+        else 
+        {
             return std::make_pair(Event::None, 0);
         }
     }
@@ -104,15 +107,19 @@ private:
 class GameMenu : public Menu
 {
 public:
+    std::function<void(void)> function;
+
 
     std::pair<Event, int> handleInput(int input) override
     {
          if (input < 0 || input > 3) 
         {
             return std::make_pair(Event::InvalidInput, 0);
-        // }  else if (input == 1) 
-        // {
-        //     return std::make_pair(Location::Forest, "");
+        }  
+        else if (input == 1) 
+        {
+            function();
+            return std::make_pair(Event::None, 0);
         }
         else if (input == 2) 
         {
@@ -147,7 +154,7 @@ public:
         {
             
             case GameMenu::Event::InvalidInput:
-                std::cout << "Invalid Input";
+                std::cout << "Invalid Input\n";
                 break;
             case GameMenu::Event::ChangeLocation:
                 g_CurrentMenu = response.second;
@@ -169,34 +176,103 @@ public:
     void print() {
         g_Menu[g_CurrentMenu]->print();
     }
-
+    
 private:
     std::size_t g_CurrentMenu;
     std::vector<Menu*> g_Menu;
 };
 
+class Player
+{
 
+public:
+    Player()
+    {
+        logs_ = 0;
+        money_ = 0;
+    }
+
+    void setMoney(int money)
+    {
+        money_ = money;
+    }
+    int getMoney() const
+    {
+        return money_;
+    }
+    void setLogs(int logs)
+    {
+        logs_ = logs;
+    }
+    int getLogs() const 
+    {
+        return logs_;
+    }
+    void addLogs()
+    {
+        logs_++;
+    }
+    void addMoney()
+    {
+        money_++;
+    }
+    void print() const
+    {
+        std::cout << "*************************\n";
+        std::cout << "You have " 
+        << money_ << " monies and " << logs_ << " logs\n";
+        std::cout << "*************************\n";
+    }
+
+private:
+    int logs_;
+    int money_;
+};
 
 int main() 
 {
+    auto player1 = Player{};
+
 
     auto forest = GameMenu{};
     forest.setTitle("Forest");
     forest.addOption("Cut Tree");
     forest.addOption("Go To Map");
     forest.addOption("Exit");
+    forest.function = [&player1]()
+    {
+        player1.addLogs();
+        std::cout << "You have " << player1.getLogs() << " log(s)\n";
+    };
 
     auto town = GameMenu{};
     town.setTitle("Town");
-    town.addOption("Sell Log");
+    town.addOption("Sell Logs");
     town.addOption("Go To Map");
     town.addOption("Exit");
+    town.function = [&player1]()
+    {
+        if (player1.getLogs() < 1)
+        {
+            std::cout << "You can't sell shit you don't have, stupid\n";
+        } else
+        {
+            player1.addMoney();
+            player1.setLogs(player1.getLogs() - 1);
+            std::cout << "You have " << player1.getMoney() << " monies\n";
+        }    
+
+    };
     
     auto home = GameMenu{};
     home.setTitle("Home");
     home.addOption("Print Stats");
     home.addOption("Go to Map");
     home.addOption("Exit");
+    home.function = [&player1]()
+    {
+        player1.print();
+    };
     
     auto map = MapMenu{};
     map.setTitle("Map");
