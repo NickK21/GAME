@@ -1,6 +1,8 @@
 #include "Player.hpp"
 
 Player::Player()
+    : 
+    Stats()
 {
     logs_ = 0;
     money_ = 0;

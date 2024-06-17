@@ -1,7 +1,8 @@
 #pragma once
 #include "std::lib.hpp"
+#include "Stats.hpp"
 
-class Player
+class Player : public Stats
 {
 
 public:
