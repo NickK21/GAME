@@ -19,13 +19,22 @@ public:
 private:
 };
 
+int RNG(int low, int high) {
+
+    return (rand() % (high - low + 1)) + low;
+}
+
 int main() 
 {
 
+    srand(std::chrono::system_clock::now().time_since_epoch().count());
+
     auto player1 = Player{};
+    player1.setHealth(10);
 
     auto goblin = Enemy{};
     goblin.setHealth(5);
+
 
     // auto troll = Enemy{};
 
@@ -74,16 +83,45 @@ int main()
     thunderdome.addOption("Fight Monster");
     thunderdome.addOption("Go To Map");
     thunderdome.addOption("Exit");
-    thunderdome.function = [&goblin]()
+    thunderdome.function = [&goblin, &player1]()
     {   
-        while (goblin.getHealth() > 0) 
-        {
+        int input = 0;
 
+        while (goblin.getHealth() > 0 && input != 2 && player1.getHealth() > 0)
+        {
+            int damage = RNG(0, 5);
             std::cout << "\nThe Goblin's Health is: " << goblin.getHealth() << "\n";
-            std::cout << "You Attacked The Goblin, -1 health\n";
-            goblin.setHealth(goblin.getHealth() -  1);
-            std::cout << "The Goblin's Health Is Now " << goblin.getHealth() << "\n\n";
+            std::cout << "Your Health Is " << player1.getHealth() << "\n";
+            std::cout << "Goblin: Attack or Flee?\n";
+            std::cin >> input;
+
+            switch (input)
+            {
+            case 1:
+                std::cout << "You Attacked The Goblin, -" << damage << " health\n";
+                goblin.setHealth(goblin.getHealth() - damage);
+                std::cout << "The Goblin's Health Is Now " << goblin.getHealth() << "\n\n";
+                std::cout << "The Goblin Attacked Back!\n";
+                player1.setHealth(player1.getHealth() - RNG(0, 5));
+                std::cout << "Your Health Is " << player1.getHealth() << "\n\n";
+                break;
+            case 2:
+                std::cout << "Run\n";
+                break;
+            default:
+                std::cout << "Invalid Input, Try Again\n";
+                break;
+            }
         }
+        if (player1.getHealth() <= 0) 
+        {
+            std::cout << "YOU DIED\n";
+        }
+        if (goblin.getHealth() <= 0) 
+        {
+            std::cout << "The Goblin Is Dead, Hooray!\n\n";
+            goblin.setHealth(5);
+        }            
     };
 
     auto map = MapMenu{};
