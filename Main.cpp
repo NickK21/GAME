@@ -4,30 +4,15 @@
 #include "Menu.hpp"
 #include "MapMenu.hpp"
 #include "GameMenu.hpp"
+#include "Enemy.hpp"
 #include "Util.hpp"
-
-class Enemy : public Stats
-{
-public:
-    Enemy()
-    {
-        std::string name_ = "";
-        int health_ = 0;
-        int minDamage_ = 0;
-        int maxDamage_ = 0;
-    }
-
-
-private:
-};
 
 void FightScene(Player& p, Enemy& e) 
 {
     int input = 0;
 
-     while (e.getHealth() > 0 && input != 2 && p.getHealth() > 0)
+    while (e.getHealth() > 0 && input != 2 && p.getHealth() > 0)
     {
-        
         int eDamage = RNG(e.getMinDamage(), e.getMaxDamage());
         int pDamage = RNG(p.getMinDamage(), p.getMaxDamage());
         
@@ -51,49 +36,46 @@ void FightScene(Player& p, Enemy& e)
             break;
         case 2:
             std::cout << "Run\n";
+            std::cout << "You have exited the fight, scaredy-cat\n";
             break;
         default:
             std::cout << "Invalid Input, Try Again\n";
             break;
         }
     }
+    
     if (p.getHealth() <= 0)
     {
         std::cout << "YOU DIED\n";
-    }
-    if (e.getHealth() <= 0) 
+    } 
+    else if (e.getHealth() <= 0) 
     {
         std::cout << "The " << e.getName() << " Is Dead, Hooray!\n\n";
         e.setHealth(5);
         p.addMoney();
-
         std::cout << "You have " << p.getMoney() << " monies\n\n";
     }
 }
 int main() 
 {
-
     srand(std::chrono::system_clock::now().time_since_epoch().count());
 
     auto player1 = Player{};
     player1.setHealth(10);
-    player1.setName(player1.getName());
     player1.setMinDamage(4);
     player1.setMaxDamage(6);
-
+    
     auto goblin = Enemy{};
     goblin.setHealth(5);
     goblin.setName("Goblin");
     goblin.setMinDamage(3);
     goblin.setMaxDamage(5);
 
-
     auto troll = Enemy{};
     troll.setHealth(8);
     troll.setName("Troll");
     troll.setMinDamage(7);
     troll.setMaxDamage(10);
-
 
     auto forest = GameMenu{};
     forest.setTitle("Forest");
@@ -143,6 +125,7 @@ int main()
     thunderdome.function = [&goblin, &player1, &troll]()
     {   
         int decision = RNG(0,1);
+
         if (decision == 0) {
             FightScene(player1, goblin);
         } 
@@ -168,6 +151,13 @@ int main()
     manager.addMenu(forest);
     manager.addMenu(thunderdome);
 
+    auto userName = std::string{};
+    std::cout << "Please enter your name: \n";
+    std::cin >> userName;
+    player1.setName(userName);
+    std::cout << "\n";
+    std::cout << "Hello " << player1.getName() << "\n\n";
+    std::cout << "Welcome to the game!\n\n";
 
     auto input = 0;
     while (true)
@@ -175,7 +165,6 @@ int main()
         manager.print();
         std::cin >> input;
         manager.handleInput(input);
-
     }
 
     return 0;

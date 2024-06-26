@@ -34,7 +34,6 @@ void Player::addMoney()
 void Player::print() const
 {
     std::cout << "*************************\n";
-    std::cout << "You have " 
-    << money_ << " monies and " << logs_ << " logs\n";
+    std::cout << "You have " << money_ << " monies and " << logs_ << " logs\n";
     std::cout << "*************************\n";
 }

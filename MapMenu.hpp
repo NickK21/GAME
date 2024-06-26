@@ -5,7 +5,7 @@
 class MapMenu : public Menu
 {
 public:
-
     std::pair<Event, int> handleInput(int input) override;
 
+private:
 };

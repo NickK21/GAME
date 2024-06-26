@@ -4,9 +4,7 @@
 
 class Player : public Stats
 {
-
 public:
-    
     Player();
     void setMoney(int money);
     int getMoney() const;

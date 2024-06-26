@@ -5,15 +5,14 @@ class Stats
 {
 public:
     Stats();
-
-    void setName(std::string name);
-    std::string getName();
+    void setName(const std::string& name);
     void setHealth(int health);
-    int getHealth();
-    void setMinDamage(int minDamage);
-    int getMinDamage();
     void setMaxDamage(int maxDamage);
-    int getMaxDamage();
+    void setMinDamage(int minDamage);
+    const std::string& getName() const;
+    int getHealth() const;
+    int getMaxDamage() const;
+    int getMinDamage() const;
 
 private:
     std::string name_;

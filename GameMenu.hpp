@@ -7,4 +7,6 @@ class GameMenu : public Menu
 public:
     std::function<void(void)> function;
     std::pair<Event, int> handleInput(int input) override;
+    
+private:
 };
